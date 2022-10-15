@@ -16,9 +16,9 @@ func main() {
 	}
 	defer file.Close()
 
-	engine.Input(file)
+	engine.AddManyWords(file)
 
-	fmt.Println(engine.GetWordsWithPrefix("ma"))
+	fmt.Println(engine.GetWordsByPrefix("ma"))
 
-	engine.Output(os.Stdout)
+	engine.OutputAll(os.Stdout)
 }
