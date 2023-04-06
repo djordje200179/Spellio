@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"regexp"
 	"strings"
 )
 
@@ -31,11 +32,22 @@ func (e *Engine) AddWord(word string) {
 	currNode.freq++
 }
 
+var nonAlphaCharsRegex = regexp.MustCompile(`[^a-z]+`)
+
+func cleanWord(word string) string {
+	word = strings.ToLower(word)
+	return nonAlphaCharsRegex.ReplaceAllString(word, "")
+}
+
 func (e *Engine) AddManyWords(reader io.Reader) {
 	scanner := bufio.NewScanner(reader)
+	scanner.Split(bufio.ScanWords)
 
 	for scanner.Scan() {
-		e.AddWord(scanner.Text())
+		word := scanner.Text()
+		word = cleanWord(word)
+
+		e.AddWord(word)
 	}
 
 	if err := scanner.Err(); err != nil {
