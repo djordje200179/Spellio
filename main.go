@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/djordje200179/Spellio/spellio"
 	"log"
 	"os"
@@ -23,5 +24,6 @@ func main() {
 	inputFromFile("Lord of the rings 2.txt", &engine)
 	inputFromFile("Lord of the rings 3.txt", &engine)
 
-	engine.OutputAll(os.Stdout)
+	fmt.Println(engine.GetWordsByPrefix("hous"))
+	fmt.Println(engine.PredictWord("hous", 5))
 }
