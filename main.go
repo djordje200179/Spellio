@@ -1,24 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"github.com/djordje200179/Spellio/spellio"
 	"log"
 	"os"
 )
 
-func main() {
-	engine := spellio.Engine{}
-
-	file, err := os.Open("sample_words.txt")
+func inputFromFile(fileName string, engine *spellio.Engine) {
+	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
 	engine.AddManyWords(file)
+}
 
-	fmt.Println(engine.GetWordsByPrefix("ma"))
+func main() {
+	engine := spellio.Engine{}
+
+	inputFromFile("Lord of the rings 1.txt", &engine)
+	inputFromFile("Lord of the rings 2.txt", &engine)
+	inputFromFile("Lord of the rings 3.txt", &engine)
 
 	engine.OutputAll(os.Stdout)
 }
