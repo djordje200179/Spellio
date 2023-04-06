@@ -24,6 +24,5 @@ func main() {
 	inputFromFile("Lord of the rings 2.txt", &engine)
 	inputFromFile("Lord of the rings 3.txt", &engine)
 
-	fmt.Println(engine.GetWordsByPrefix("hous"))
-	fmt.Println(engine.PredictWord("hous", 5))
+	fmt.Println(engine.GetNearbyWords("housr", 1, spellio.SerbianKeyboardLayout))
 }
