@@ -45,34 +45,49 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]uint {
 	return res
 }
 
-func (e *Engine) GetNearbyWords(rawWord string, maxDistance int, layout KeyboardLayoutNearbyKeys) map[string]uint {
+type nearbyWordState struct {
+	node    *Node
+	changes uint
+}
+
+func (e *Engine) GetNearbyWords(rawWord string, maxChanges uint, layout KeyboardLayoutNearbyKeys) map[string]uint {
 	rawWord = strings.ToLower(rawWord)
 
-	currNodes := []*Node{&e.root}
+	currStates := []nearbyWordState{{&e.root, 0}}
 	for _, currChar := range rawWord {
-		possibleChars := make([]rune, len(layout[currChar])+1)
-		possibleChars[0] = currChar
-		copy(possibleChars[1:], layout[currChar])
+		nextStates := make([]nearbyWordState, 0, len(currStates)*len(layout))
 
-		nextNodes := make([]*Node, 0, len(possibleChars))
-		for _, possibleChar := range possibleChars {
-			for _, currNode := range currNodes {
-				nextNode := currNode.getChild(possibleChar)
-				if nextNode != nil {
-					nextNodes = append(nextNodes, nextNode)
+		for _, currState := range currStates {
+			regularNextNode := currState.node.getChild(currChar)
+			if regularNextNode != nil {
+				regularNextState := nearbyWordState{regularNextNode, currState.changes}
+				nextStates = append(nextStates, regularNextState)
+			}
+
+			if currState.changes < maxChanges {
+				alternativeChars := layout[currChar]
+				for _, alternativeChar := range alternativeChars {
+					alternativeNextNode := currState.node.getChild(alternativeChar)
+					if alternativeNextNode != nil {
+						alternativeNextState := nearbyWordState{alternativeNextNode, currState.changes + 1}
+						nextStates = append(nextStates, alternativeNextState)
+					}
 				}
 			}
 		}
 
-		currNodes = nextNodes
+		currStates = nextStates
 	}
 
-	possibleWords := make(map[string]uint, len(currNodes))
-	for _, currNode := range currNodes {
-		word := currNode.getWord(&e.root)
-		occurrences := currNode.freq
+	possibleWords := make(map[string]uint, len(currStates))
+	for _, currState := range currStates {
+		if currState.node.freq == 0 {
+			continue
+		}
 
-		possibleWords[word] = occurrences
+		word := currState.node.getWord(&e.root)
+
+		possibleWords[word] = currState.changes
 	}
 
 	return possibleWords

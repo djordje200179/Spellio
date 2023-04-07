@@ -24,5 +24,5 @@ func main() {
 	inputFromFile("Lord of the rings 2.txt", &engine)
 	inputFromFile("Lord of the rings 3.txt", &engine)
 
-	fmt.Println(engine.GetNearbyWords("housr", 1, spellio.SerbianKeyboardLayout))
+	fmt.Println(engine.CorrectWord("rimg", spellio.SerbianKeyboardLayout, 3))
 }
