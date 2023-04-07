@@ -6,11 +6,11 @@ func (e *Engine) PredictWord(prefix string, limit int) []string {
 
 	for i := 0; i < limit && len(allWords) > 0; i++ {
 		var maxWord string
-		var maxOccurrence uint
-		for word, occurrences := range allWords {
-			if occurrences > maxOccurrence || maxWord == "" {
+		var maxWordInfo WordInfo
+		for word, wordInfo := range allWords {
+			if maxWord == "" || wordInfo.Freq > maxWordInfo.Freq {
 				maxWord = word
-				maxOccurrence = occurrences
+				maxWordInfo = wordInfo
 			}
 		}
 
@@ -31,11 +31,13 @@ func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, li
 
 	for i := 0; i < limit && len(nearbyWords) > 0; i++ {
 		var minWord string
-		var minChanges uint
-		for word, changes := range nearbyWords {
-			if changes < minChanges || minWord == "" {
+		var minWordInfo NearbyWordInfo
+		for word, wordInfo := range nearbyWords {
+			if minWord == "" ||
+				wordInfo.Changes < minWordInfo.Changes ||
+				(wordInfo.Changes == minWordInfo.Changes && wordInfo.Freq > minWordInfo.Freq) {
 				minWord = word
-				minChanges = changes
+				minWordInfo = wordInfo
 			}
 		}
 

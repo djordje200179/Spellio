@@ -29,7 +29,7 @@ func (e *Engine) AddWord(word string) {
 		}
 	}
 
-	currNode.freq++
+	currNode.Freq++
 }
 
 var nonAlphaCharsRegex = regexp.MustCompile(`[^a-z]+`)
