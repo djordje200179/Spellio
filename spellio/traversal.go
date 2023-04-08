@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func (e *Engine) findNode(word string) *Node {
+func (e *Engine) findNode(word string) *node {
 	currNode := &e.root
 	for _, char := range word {
 		nextNode := currNode.getChild(char)
@@ -25,7 +25,7 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]WordInfo {
 
 	startNode := e.findNode(prefix)
 
-	nodeStack := stack.New[*Node]()
+	nodeStack := stack.New[*node]()
 	nodeStack.Push(startNode)
 
 	words := make(map[string]WordInfo)
@@ -46,7 +46,7 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]WordInfo {
 }
 
 type nearbyWordState struct {
-	node    *Node
+	node    *node
 	changes uint
 }
 

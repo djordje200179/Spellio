@@ -9,16 +9,16 @@ type WordInfo struct {
 	Freq uint
 }
 
-type Node struct {
+type node struct {
 	WordInfo
 	char rune
 
-	children []*Node
-	parent   *Node
+	children []*node
+	parent   *node
 }
 
-func (node *Node) getChild(char rune) *Node {
-	for _, childNode := range node.children {
+func (n *node) getChild(char rune) *node {
+	for _, childNode := range n.children {
 		if childNode.char == char {
 			return childNode
 		}
@@ -27,14 +27,14 @@ func (node *Node) getChild(char rune) *Node {
 	return nil
 }
 
-func (node *Node) getWord(endNode *Node) string {
-	path := stack.New[*Node]()
-	for currNode := node; currNode != nil && currNode != endNode; currNode = currNode.parent {
+func (n *node) getWord(endNode *node) string {
+	path := stack.New[*node]()
+	for currNode := n; currNode != nil && currNode != endNode; currNode = currNode.parent {
 		path.Push(currNode)
 	}
 
 	var sb strings.Builder
-	path.ForEach(func(currNode *Node) {
+	path.ForEach(func(currNode *node) {
 		sb.WriteRune(currNode.char)
 	})
 
