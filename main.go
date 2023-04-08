@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/djordje200179/Spellio/spellio"
 	"log"
 	"os"
@@ -29,13 +30,8 @@ func main() {
 	inputFromFile("books/Harry Potter - The Order of the Phoenix.txt", &engine)
 	inputFromFile("books/Harry Potter - The Half Blood Prince.txt", &engine)
 	inputFromFile("books/Harry Potter - The Deathly Hallows.txt", &engine)
+	inputFromFile("books/Alice's Adventures in Wonderland.txt", &engine)
+	inputFromFile("books/Don Quixote.txt", &engine)
 
-	file, err := os.Create("out.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	engine.OutputAllWords(file)
-
-	file.Close()
+	fmt.Printf("Words in dictionary: %d", engine.CountWords())
 }
