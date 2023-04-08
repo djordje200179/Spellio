@@ -25,5 +25,5 @@ func main() {
 	inputFromFile("books/Lord of the rings 3.txt", &engine)
 	inputFromFile("books/Harry Potter - The Philosopher's Stone.txt", &engine)
 
-	fmt.Println(engine.CorrectWord("rimg", spellio.SerbianKeyboardLayout, 3))
+	fmt.Println(engine.CountWords())
 }

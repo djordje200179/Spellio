@@ -5,6 +5,26 @@ import (
 	"strings"
 )
 
+func (e *Engine) CountWords() int {
+	nodeStack := stack.New[*node]()
+	nodeStack.Push(&e.root)
+
+	count := 0
+	for !nodeStack.Empty() {
+		currNode := nodeStack.Pop()
+
+		if currNode.Freq > 0 {
+			count++
+		}
+
+		for _, childNode := range currNode.children {
+			nodeStack.Push(childNode)
+		}
+	}
+
+	return count
+}
+
 func (e *Engine) findNode(word string) *node {
 	currNode := &e.root
 	for _, char := range word {

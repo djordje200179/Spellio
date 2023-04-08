@@ -63,7 +63,7 @@ func (e *Engine) IsWordValid(word string) bool {
 	return node != nil
 }
 
-func (e *Engine) OutputAll(writer io.Writer) {
+func (e *Engine) OutputAllWords(writer io.Writer) {
 	for word, freq := range e.GetWordsByPrefix("") {
 		fmt.Fprintf(writer, "%v (%v)\n", word, freq)
 	}
