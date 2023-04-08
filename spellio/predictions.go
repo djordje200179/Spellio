@@ -24,7 +24,7 @@ func (e *Engine) CompleteWord(prefix string, limit int) []string {
 const allowedChangesQuotient = 3
 
 func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, limit int) []string {
-	allowedChanges := (len(rawWord) + allowedChangesQuotient - 1) / allowedChangesQuotient
+	allowedChanges := len([]rune(rawWord)) / allowedChangesQuotient
 
 	nearbyWords := e.GetNearbyWords(rawWord, allowedChanges, layout)
 	words := make([]string, 0, len(nearbyWords))
