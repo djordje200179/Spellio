@@ -33,5 +33,8 @@ func main() {
 	inputFromFile("books/Alice's Adventures in Wonderland.txt", &engine)
 	inputFromFile("books/Don Quixote.txt", &engine)
 
-	fmt.Printf("Words in dictionary: %d", engine.CountWords())
+	fmt.Printf("Words in dictionary: %d\n", engine.CountWords())
+
+	fmt.Printf("hospi...: %v\n", engine.CompleteWord("hospi", 5))
+	fmt.Printf("housr?: %v\n", engine.CorrectWord("housr", spellio.EnglishKeyboardLayout, 5))
 }
