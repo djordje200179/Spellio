@@ -29,7 +29,13 @@ func (e *Engine) AddWord(word string) {
 		}
 	}
 
-	currNode.Freq++
+	if currNode.WordInfo == nil {
+		currNode.WordInfo = &WordInfo{
+			Freq: 1,
+		}
+	} else {
+		currNode.Freq++
+	}
 }
 
 var nonAlphaCharsRegex = regexp.MustCompile(`[^a-z]+`)

@@ -13,7 +13,7 @@ func (e *Engine) CountWords() int {
 	for !nodeStack.Empty() {
 		currNode := nodeStack.Pop()
 
-		if currNode.Freq > 0 {
+		if currNode.WordInfo != nil {
 			count++
 		}
 
@@ -52,9 +52,9 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]WordInfo {
 	for !nodeStack.Empty() {
 		currNode := nodeStack.Pop()
 
-		if currNode.Freq > 0 {
+		if currNode.WordInfo != nil {
 			word := prefix + currNode.getWord(startNode)
-			words[word] = currNode.WordInfo
+			words[word] = *currNode.WordInfo
 		}
 
 		for _, childNode := range currNode.children {
@@ -106,13 +106,13 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges uint, layout Keyboard
 
 	possibleWords := make(map[string]NearbyWordInfo, len(currStates))
 	for _, currState := range currStates {
-		if currState.node.Freq == 0 {
+		if currState.node.WordInfo == nil {
 			continue
 		}
 
 		word := currState.node.getWord(&e.root)
 
-		possibleWords[word] = NearbyWordInfo{currState.node.WordInfo, currState.changes}
+		possibleWords[word] = NearbyWordInfo{*currState.node.WordInfo, currState.changes}
 	}
 
 	return possibleWords

@@ -5,12 +5,8 @@ import (
 	"strings"
 )
 
-type WordInfo struct {
-	Freq uint
-}
-
 type letterNode struct {
-	WordInfo
+	*WordInfo
 	char rune
 
 	children []*letterNode
