@@ -26,7 +26,7 @@ const allowedChangesQuotient = 3
 func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, limit int) []string {
 	allowedChanges := (len(rawWord) + allowedChangesQuotient - 1) / allowedChangesQuotient
 
-	nearbyWords := e.GetNearbyWords(rawWord, uint(allowedChanges), layout)
+	nearbyWords := e.GetNearbyWords(rawWord, allowedChanges, layout)
 	words := make([]string, 0, len(nearbyWords))
 
 	for i := 0; i < limit && len(nearbyWords) > 0; i++ {

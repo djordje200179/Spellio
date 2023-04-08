@@ -67,52 +67,94 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]Word {
 
 type nearbyWordState struct {
 	node    *letterNode
-	changes uint
+	chars   []rune
+	changes int
+	index   int
 }
 
 type NearbyWordInfo struct {
 	Word
-	Changes uint
+	Changes int
 }
 
-func (e *Engine) GetNearbyWords(rawWord string, maxChanges uint, layout KeyboardLayoutNearbyKeys) map[string]NearbyWordInfo {
+func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardLayoutNearbyKeys) map[string]NearbyWordInfo {
 	rawWord = strings.ToLower(rawWord)
+	rawWordChars := []rune(rawWord)
 
-	currStates := []nearbyWordState{{&e.root, 0}}
-	for _, currChar := range rawWord {
-		nextStates := make([]nearbyWordState, 0, len(currStates)*len(layout))
+	possibleWords := make(map[string]NearbyWordInfo)
 
-		for _, currState := range currStates {
-			regularNextNode := currState.node.getChild(currChar)
-			if regularNextNode != nil {
-				regularNextState := nearbyWordState{regularNextNode, currState.changes}
-				nextStates = append(nextStates, regularNextState)
+	statesQueue := []nearbyWordState{{&e.root, []rune{}, 0, 0}}
+
+	for len(statesQueue) > 0 {
+		currState := statesQueue[0]
+		statesQueue = statesQueue[1:]
+
+		if currState.index == len(rawWordChars) {
+			if currState.node.Word != nil {
+				word := string(currState.chars)
+				possibleWords[word] = NearbyWordInfo{*currState.node.Word, currState.changes}
 			}
 
-			if currState.changes < maxChanges {
-				alternativeChars := layout[currChar]
-				for _, alternativeChar := range alternativeChars {
-					alternativeNextNode := currState.node.getChild(alternativeChar)
-					if alternativeNextNode != nil {
-						alternativeNextState := nearbyWordState{alternativeNextNode, currState.changes + 1}
-						nextStates = append(nextStates, alternativeNextState)
-					}
-				}
-			}
-		}
-
-		currStates = nextStates
-	}
-
-	possibleWords := make(map[string]NearbyWordInfo, len(currStates))
-	for _, currState := range currStates {
-		if currState.node.Word == nil {
 			continue
 		}
 
-		word := currState.node.getWord(&e.root)
+		nextChar := rawWordChars[currState.index]
 
-		possibleWords[word] = NearbyWordInfo{*currState.node.Word, currState.changes}
+		regularNextNode := currState.node.getChild(nextChar)
+		if regularNextNode != nil {
+			nextStateChars := make([]rune, len(currState.chars)+1)
+			copy(nextStateChars, currState.chars)
+			nextStateChars[len(currState.chars)] = nextChar
+
+			regularCharState := nearbyWordState{
+				regularNextNode,
+				//append(currState.chars, nextChar),
+				nextStateChars,
+				currState.changes, currState.index + 1,
+			}
+
+			statesQueue = append(statesQueue, regularCharState)
+		}
+
+		if currState.changes < maxChanges {
+			alternativeChars := layout[nextChar]
+
+			for _, alternativeChar := range alternativeChars {
+				alternativeNextNode := currState.node.getChild(alternativeChar)
+
+				if alternativeNextNode != nil {
+					nextStateChars := make([]rune, len(currState.chars)+1)
+					copy(nextStateChars, currState.chars)
+					nextStateChars[len(currState.chars)] = alternativeChar
+
+					alternativeCharState := nearbyWordState{
+						alternativeNextNode,
+						//append(currState.chars, alternativeChar),
+						nextStateChars,
+						currState.changes + 1, currState.index + 1,
+					}
+
+					statesQueue = append(statesQueue, alternativeCharState)
+				}
+			}
+
+			var checkCharRedundancy bool = true
+			// temporally every char will be checked for redundancy
+
+			if checkCharRedundancy {
+				nextStateChars := make([]rune, len(currState.chars))
+				copy(nextStateChars, currState.chars)
+
+				redundantCharState := nearbyWordState{
+					currState.node,
+					//currState.chars,
+					nextStateChars,
+					currState.changes + 1, currState.index + 1,
+				}
+
+				statesQueue = append(statesQueue, redundantCharState)
+			}
+		}
 	}
 
 	return possibleWords
