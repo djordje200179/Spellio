@@ -10,7 +10,7 @@ import (
 )
 
 type Engine struct {
-	root node
+	root letterNode
 }
 
 func (e *Engine) AddWord(word string) {
@@ -23,7 +23,7 @@ func (e *Engine) AddWord(word string) {
 		if nextNode != nil {
 			currNode = nextNode
 		} else {
-			newNode := &node{char: char, parent: currNode}
+			newNode := &letterNode{char: char, parent: currNode}
 			currNode.children = append(currNode.children, newNode)
 			currNode = newNode
 		}

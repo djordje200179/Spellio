@@ -1,6 +1,6 @@
 package spellio
 
-func (e *Engine) PredictWord(prefix string, limit int) []string {
+func (e *Engine) CompleteWord(prefix string, limit int) []string {
 	allWords := e.GetWordsByPrefix(prefix)
 	words := make([]string, 0, len(allWords))
 

@@ -6,7 +6,7 @@ import (
 )
 
 func (e *Engine) CountWords() int {
-	nodeStack := stack.New[*node]()
+	nodeStack := stack.New[*letterNode]()
 	nodeStack.Push(&e.root)
 
 	count := 0
@@ -25,7 +25,7 @@ func (e *Engine) CountWords() int {
 	return count
 }
 
-func (e *Engine) findNode(word string) *node {
+func (e *Engine) findNode(word string) *letterNode {
 	currNode := &e.root
 	for _, char := range word {
 		nextNode := currNode.getChild(char)
@@ -45,7 +45,7 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]WordInfo {
 
 	startNode := e.findNode(prefix)
 
-	nodeStack := stack.New[*node]()
+	nodeStack := stack.New[*letterNode]()
 	nodeStack.Push(startNode)
 
 	words := make(map[string]WordInfo)
@@ -66,7 +66,7 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]WordInfo {
 }
 
 type nearbyWordState struct {
-	node    *node
+	node    *letterNode
 	changes uint
 }
 
