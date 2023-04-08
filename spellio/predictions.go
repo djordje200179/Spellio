@@ -6,7 +6,7 @@ func (e *Engine) CompleteWord(prefix string, limit int) []string {
 
 	for i := 0; i < limit && len(allWords) > 0; i++ {
 		var maxWord string
-		var maxWordInfo WordInfo
+		var maxWordInfo Word
 		for word, wordInfo := range allWords {
 			if maxWord == "" || wordInfo.Freq > maxWordInfo.Freq {
 				maxWord = word

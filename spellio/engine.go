@@ -29,8 +29,8 @@ func (e *Engine) AddWord(word string) {
 		}
 	}
 
-	if currNode.WordInfo == nil {
-		currNode.WordInfo = &WordInfo{
+	if currNode.Word == nil {
+		currNode.Word = &Word{
 			Freq: 1,
 		}
 	} else {
@@ -69,8 +69,13 @@ func (e *Engine) IsWordValid(word string) bool {
 	return node != nil
 }
 
-func (e *Engine) OutputAllWords(writer io.Writer) {
-	for word, freq := range e.GetWordsByPrefix("") {
-		fmt.Fprintf(writer, "%v (%v)\n", word, freq)
+func (e *Engine) OutputAllWords(writer io.Writer) error {
+	for word, wordInfo := range e.GetWordsByPrefix("") {
+		_, err := fmt.Fprintf(writer, "%v (%v)\n", word, wordInfo)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }

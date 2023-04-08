@@ -6,7 +6,7 @@ import (
 )
 
 type letterNode struct {
-	*WordInfo
+	*Word
 	char rune
 
 	children []*letterNode
