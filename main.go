@@ -20,9 +20,10 @@ func inputFromFile(fileName string, engine *spellio.Engine) {
 func main() {
 	engine := spellio.Engine{}
 
-	inputFromFile("Lord of the rings 1.txt", &engine)
-	inputFromFile("Lord of the rings 2.txt", &engine)
-	inputFromFile("Lord of the rings 3.txt", &engine)
+	inputFromFile("books/Lord of the rings 1.txt", &engine)
+	inputFromFile("books/Lord of the rings 2.txt", &engine)
+	inputFromFile("books/Lord of the rings 3.txt", &engine)
+	inputFromFile("books/Harry Potter - The Philosopher's Stone.txt", &engine)
 
 	fmt.Println(engine.CorrectWord("rimg", spellio.SerbianKeyboardLayout, 3))
 }
