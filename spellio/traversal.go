@@ -1,24 +1,24 @@
 package spellio
 
 import (
-	"github.com/djordje200179/extendedlibrary/datastructures/linears/stack"
+	"github.com/djordje200179/extendedlibrary/datastructures/sequences/collectionsequence"
 	"strings"
 )
 
 func (e *Engine) CountWords() int {
-	nodeStack := stack.New[*letterNode]()
-	nodeStack.Push(&e.root)
-
 	count := 0
+
+	nodeStack := collectionsequence.NewDeque[*letterNode]()
+	nodeStack.PushBack(&e.root)
 	for !nodeStack.Empty() {
-		currNode := nodeStack.Pop()
+		currNode := nodeStack.PopBack()
 
 		if currNode.Word != nil {
 			count++
 		}
 
 		for _, childNode := range currNode.children {
-			nodeStack.Push(childNode)
+			nodeStack.PushBack(childNode)
 		}
 	}
 
@@ -42,15 +42,14 @@ func (e *Engine) findNode(word string) *letterNode {
 
 func (e *Engine) GetWordsByPrefix(prefix string) map[string]Word {
 	prefix = strings.ToLower(prefix)
-
 	startNode := e.findNode(prefix)
 
-	nodeStack := stack.New[*letterNode]()
-	nodeStack.Push(startNode)
-
 	words := make(map[string]Word)
+
+	nodeStack := collectionsequence.NewDeque[*letterNode]()
+	nodeStack.PushBack(startNode)
 	for !nodeStack.Empty() {
-		currNode := nodeStack.Pop()
+		currNode := nodeStack.PopBack()
 
 		if currNode.Word != nil {
 			word := prefix + currNode.getWord(startNode)
@@ -58,7 +57,7 @@ func (e *Engine) GetWordsByPrefix(prefix string) map[string]Word {
 		}
 
 		for _, childNode := range currNode.children {
-			nodeStack.Push(childNode)
+			nodeStack.PushBack(childNode)
 		}
 	}
 
@@ -83,11 +82,10 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 
 	possibleWords := make(map[string]NearbyWordInfo)
 
-	statesQueue := []nearbyWordState{{&e.root, []rune{}, 0, 0}}
-
-	for len(statesQueue) > 0 {
-		currState := statesQueue[0]
-		statesQueue = statesQueue[1:]
+	statesQueue := collectionsequence.NewDeque[nearbyWordState]()
+	statesQueue.PushBack(nearbyWordState{&e.root, []rune{}, 0, 0})
+	for !statesQueue.Empty() {
+		currState := statesQueue.PopFront()
 
 		if currState.index == len(rawWordChars) {
 			if currState.node.Word != nil {
@@ -113,7 +111,7 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 				currState.changes, currState.index + 1,
 			}
 
-			statesQueue = append(statesQueue, regularCharState)
+			statesQueue.PushBack(regularCharState)
 		}
 
 		if currState.changes < maxChanges {
@@ -134,7 +132,7 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 						currState.changes + 1, currState.index + 1,
 					}
 
-					statesQueue = append(statesQueue, alternativeCharState)
+					statesQueue.PushBack(alternativeCharState)
 				}
 			}
 
@@ -152,7 +150,7 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 					currState.changes + 1, currState.index + 1,
 				}
 
-				statesQueue = append(statesQueue, redundantCharState)
+				statesQueue.PushBack(redundantCharState)
 			}
 		}
 	}

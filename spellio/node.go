@@ -1,7 +1,7 @@
 package spellio
 
 import (
-	"github.com/djordje200179/extendedlibrary/datastructures/linears/stack"
+	"github.com/djordje200179/extendedlibrary/datastructures/sequences/collectionsequence"
 	"strings"
 )
 
@@ -24,15 +24,16 @@ func (node *letterNode) getChild(char rune) *letterNode {
 }
 
 func (node *letterNode) getWord(endNode *letterNode) string {
-	path := stack.New[*letterNode]()
+	path := collectionsequence.NewDeque[*letterNode]()
 	for currNode := node; currNode != nil && currNode != endNode; currNode = currNode.parent {
-		path.Push(currNode)
+		path.PushBack(currNode)
 	}
 
 	var sb strings.Builder
-	path.ForEach(func(currNode *letterNode) {
+	for !path.Empty() {
+		currNode := path.PopBack()
 		sb.WriteRune(currNode.char)
-	})
+	}
 
 	return sb.String()
 }
