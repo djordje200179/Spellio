@@ -1,11 +1,15 @@
 package spellio
 
-import "fmt"
-
 type Word struct {
 	Freq uint
+
+	lastLetter *letterNode
+}
+
+func (word Word) Empty() bool {
+	return word.lastLetter == nil
 }
 
 func (word Word) String() string {
-	return fmt.Sprintf("%d", word.Freq)
+	return word.lastLetter.getWord(nil)
 }
