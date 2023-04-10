@@ -14,7 +14,7 @@ func inputFromFile(fileName string, engine *spellio.Engine) {
 	}
 	defer file.Close()
 
-	engine.AddManyWords(file)
+	engine.InsertFromText(file)
 }
 
 func main() {

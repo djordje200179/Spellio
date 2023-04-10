@@ -13,7 +13,7 @@ type Engine struct {
 	root letterNode
 }
 
-func (e *Engine) AddWord(word string) {
+func (e *Engine) Insert(word string) {
 	word = strings.ToLower(word)
 
 	currNode := &e.root
@@ -46,7 +46,7 @@ func cleanWord(word string) string {
 	return nonAlphaCharsRegex.ReplaceAllString(word, "")
 }
 
-func (e *Engine) AddManyWords(reader io.Reader) {
+func (e *Engine) InsertFromText(reader io.Reader) {
 	scanner := bufio.NewScanner(reader)
 	scanner.Split(bufio.ScanWords)
 
@@ -54,7 +54,7 @@ func (e *Engine) AddManyWords(reader io.Reader) {
 		word := scanner.Text()
 		word = cleanWord(word)
 
-		e.AddWord(word)
+		e.Insert(word)
 	}
 
 	if err := scanner.Err(); err != nil {
