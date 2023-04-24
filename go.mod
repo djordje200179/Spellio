@@ -1,4 +1,4 @@
-module github.com/djordje200179/Spellio
+module github.com/djordje200179/spellio
 
 go 1.18
 
