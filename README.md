@@ -18,8 +18,8 @@ You can add words in two ways:
 ### Usage
 Currently, there are two main mods available:
 
-#### 1. Word prediction
-Engine will predict words based on prefix that was inputted.
+#### 1. Word completion
+Engine will try to complete word based on the prefix that was inputted.
 Possible words will be sorted by their frequency in the engine.
 
 Example: 
