@@ -75,6 +75,8 @@ type NearbyWordInfo struct {
 	Changes int
 }
 
+type KeyboardLayoutNearbyKeys map[rune][]rune
+
 func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardLayoutNearbyKeys) []NearbyWordInfo {
 	rawWord = strings.ToLower(rawWord)
 	rawWordChars := []rune(rawWord)
