@@ -2,6 +2,8 @@ package keyboardlayouts
 
 import "github.com/djordje200179/spellio"
 
+// SerbianKeyboardLayout is a keyboard layout for the
+// Serbian language QUERTZ keyboard.
 var SerbianKeyboardLayout = spellio.KeyboardLayoutNearbyKeys{
 	'a': {'q', 'w', 's', 'y'},
 	'b': {'v', 'g', 'h', 'n'},

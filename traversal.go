@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// CountWords returns the number of words in the dictionary.
 func (e *Engine) CountWords() int {
 	count := 0
 
@@ -40,6 +41,8 @@ func (e *Engine) findNode(word string) *letterNode {
 	return currNode
 }
 
+// GetWordsByPrefix returns all words in the dictionary
+// that start with the given prefix.
 func (e *Engine) GetWordsByPrefix(prefix string) []Word {
 	prefix = strings.ToLower(prefix)
 	startNode := e.findNode(prefix)
@@ -70,13 +73,21 @@ type nearbyWordState struct {
 	index   int
 }
 
+// A NearbyWordInfo contains a word and the number of changes
+// required to transform it into the original word.
 type NearbyWordInfo struct {
 	Word
 	Changes int
 }
 
+// A KeyboardLayoutNearbyKeys is a map of characters
+// to the characters that are nearby on the keyboard
+// and are considered as possible replacements.
 type KeyboardLayoutNearbyKeys map[rune][]rune
 
+// GetNearbyWords returns all words in the dictionary
+// that are near the given word and can be transformed
+// into it with the given number of changes.
 func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardLayoutNearbyKeys) []NearbyWordInfo {
 	rawWord = strings.ToLower(rawWord)
 	rawWordChars := []rune(rawWord)

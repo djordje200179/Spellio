@@ -2,6 +2,8 @@ package keyboardlayouts
 
 import "github.com/djordje200179/spellio"
 
+// EnglishKeyboardLayout is a keyboard layout for the
+// English language QUERTY keyboard.
 var EnglishKeyboardLayout = spellio.KeyboardLayoutNearbyKeys{
 	'a': {'q', 'w', 's', 'z'},
 	'b': {'v', 'g', 'h', 'n'},
