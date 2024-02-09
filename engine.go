@@ -20,7 +20,7 @@ import (
 //
 // Zero value is a valid empty Engine.
 type Engine struct {
-	root letter
+	root letterNode
 }
 
 // Insert adds a word to the Engine.
@@ -32,9 +32,9 @@ func (e *Engine) Insert(word string) {
 
 	curr := &e.root
 	for _, char := range word {
-		next := curr.getChild(char)
-		if next == nil {
-			next = &letter{char: char, parent: curr}
+		next, ok := curr.findChild(char)
+		if !ok {
+			next = &letterNode{char: char, parent: curr}
 			curr.children = append(curr.children, next)
 		}
 
@@ -84,15 +84,15 @@ func (e *Engine) InsertFromText(reader io.Reader) {
 //
 // If the word is found, the Word and true are returned.
 // If the word is not found, an empty Word and false are returned.
-func (e *Engine) FindWord(word string) (Word, bool) {
+func (e *Engine) FindWord(word string) (*Word, bool) {
 	word = strings.ToLower(word)
 
-	node := e.findNode(word)
-	if node == nil {
-		return Word{}, false
+	node, ok := e.findNode(word)
+	if !ok {
+		return nil, false
 	}
 
-	return *node.Word, true
+	return node.Word, true
 }
 
 // OutputAllWords will write all words in the Engine to a writer.

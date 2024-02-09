@@ -8,9 +8,9 @@ import (
 //
 // The list is sorted by frequency in descending order and
 // can be limited by the given limit.
-func (e *Engine) CompleteWord(prefix string, limit int) []Word {
+func (e *Engine) CompleteWord(prefix string, limit int) []*Word {
 	words := e.GetWordsByPrefix(prefix)
-	slices.SortFunc(words, func(first, second Word) int {
+	slices.SortFunc(words, func(first, second *Word) int {
 		return int(first.Freq) - int(second.Freq)
 	})
 
@@ -31,11 +31,11 @@ const allowedChangesQuotient = 3
 //
 // The number of allowed changes is calculated as the length of the word
 // divided by the 3.
-func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, limit int) []Word {
+func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, limit int) []*Word {
 	maxChanges := len([]rune(rawWord)) / allowedChangesQuotient
 
 	nearbyWords := e.GetNearbyWords(rawWord, maxChanges, layout)
-	slices.SortFunc(nearbyWords, func(first, second NearbyWordInfo) int {
+	slices.SortFunc(nearbyWords, func(first, second NearbyWord) int {
 		changesDiff := first.Changes - second.Changes
 		if changesDiff != 0 {
 			return changesDiff
@@ -48,7 +48,7 @@ func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, li
 		limit = len(nearbyWords)
 	}
 
-	words := make([]Word, limit)
+	words := make([]*Word, limit)
 	for i := range limit {
 		words[i] = nearbyWords[i].Word
 	}

@@ -4,10 +4,10 @@ package spellio
 type Word struct {
 	Freq uint // Frequency of the word in the dictionary.
 
-	lastLetter *letter
+	lastLetter *letterNode
 }
 
 // String returns the word as a string.
-func (w Word) String() string {
+func (w *Word) String() string {
 	return w.lastLetter.getWord(nil)
 }

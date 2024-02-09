@@ -6,15 +6,15 @@ import (
 
 // CountWords returns the number of words in the dictionary.
 func (e *Engine) CountWords() int {
-	count := 0
+	cnt := 0
 
-	stack := []*letter{&e.root}
+	stack := []*letterNode{&e.root}
 	for len(stack) > 0 {
 		curr := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
 
 		if curr.Word != nil {
-			count++
+			cnt++
 		}
 
 		for _, child := range curr.children {
@@ -22,42 +22,41 @@ func (e *Engine) CountWords() int {
 		}
 	}
 
-	return count
+	return cnt
 }
 
-func (e *Engine) findNode(word string) *letter {
+func (e *Engine) findNode(word string) (*letterNode, bool) {
 	curr := &e.root
 	for _, char := range word {
-		next := curr.getChild(char)
-
-		if next != nil {
-			curr = next
-		} else {
-			return nil
+		next, ok := curr.findChild(char)
+		if !ok {
+			return nil, false
 		}
+
+		curr = next
 	}
 
-	return curr
+	return curr, true
 }
 
 // GetWordsByPrefix returns all words in the dictionary
 // that start with the given prefix.
-func (e *Engine) GetWordsByPrefix(prefix string) []Word {
+func (e *Engine) GetWordsByPrefix(prefix string) []*Word {
 	prefix = strings.ToLower(prefix)
-	start := e.findNode(prefix)
-	if start == nil {
+	start, ok := e.findNode(prefix)
+	if !ok {
 		return nil
 	}
 
-	var words []Word
+	var words []*Word
 
-	stack := []*letter{start}
+	stack := []*letterNode{start}
 	for len(stack) > 0 {
 		curr := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
 
 		if curr.Word != nil {
-			words = append(words, *curr.Word)
+			words = append(words, curr.Word)
 		}
 
 		for _, child := range curr.children {
@@ -68,17 +67,10 @@ func (e *Engine) GetWordsByPrefix(prefix string) []Word {
 	return words
 }
 
-type nearbyWordState struct {
-	node    *letter
-	chars   []rune
-	changes int
-	index   int
-}
-
-// A NearbyWordInfo contains a word and the number of changes
+// A NearbyWord contains the word and the number of changes
 // required to transform it into the original word.
-type NearbyWordInfo struct {
-	Word
+type NearbyWord struct {
+	*Word
 	Changes int
 }
 
@@ -90,11 +82,18 @@ type KeyboardLayoutNearbyKeys map[rune][]rune
 // GetNearbyWords returns all words in the dictionary
 // that are near the given word and can be transformed
 // into it with the given number of changes.
-func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardLayoutNearbyKeys) []NearbyWordInfo {
+func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardLayoutNearbyKeys) []NearbyWord {
 	rawWord = strings.ToLower(rawWord)
 	rawWordChars := []rune(rawWord)
 
-	possibleWords := make([]NearbyWordInfo, 0)
+	possibleWords := make([]NearbyWord, 0)
+
+	type nearbyWordState struct {
+		node    *letterNode
+		chars   []rune
+		changes int
+		index   int
+	}
 
 	queue := []nearbyWordState{{&e.root, []rune{}, 0, 0}}
 	for len(queue) > 0 {
@@ -103,7 +102,7 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 
 		if currState.index == len(rawWordChars) {
 			if currState.node.Word != nil {
-				wordInfo := NearbyWordInfo{*currState.node.Word, currState.changes}
+				wordInfo := NearbyWord{currState.node.Word, currState.changes}
 				possibleWords = append(possibleWords, wordInfo)
 			}
 
@@ -112,42 +111,41 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 
 		nextChar := rawWordChars[currState.index]
 
-		regularNextNode := currState.node.getChild(nextChar)
-		if regularNextNode != nil {
-			nextStateChars := make([]rune, len(currState.chars)+1)
-			copy(nextStateChars, currState.chars)
-			nextStateChars[len(currState.chars)] = nextChar
-
-			regularCharState := nearbyWordState{
-				regularNextNode,
-				//append(currState.chars, nextChar),
-				nextStateChars,
-				currState.changes, currState.index + 1,
+		nextNode, ok := currState.node.findChild(nextChar)
+		if ok {
+			nextState := nearbyWordState{
+				nextNode,
+				make([]rune, len(currState.chars)+1),
+				currState.changes + 1, currState.index + 1,
 			}
 
-			queue = append(queue, regularCharState)
+			copy(nextState.chars, currState.chars)
+			nextState.chars[len(currState.chars)] = nextChar
+
+			queue = append(queue, nextState)
 		}
 
 		if currState.changes < maxChanges {
 			alternativeChars := layout[nextChar]
 
 			for _, alternativeChar := range alternativeChars {
-				alternativeNextNode := currState.node.getChild(alternativeChar)
-
-				if alternativeNextNode != nil {
-					nextStateChars := make([]rune, len(currState.chars)+1)
-					copy(nextStateChars, currState.chars)
-					nextStateChars[len(currState.chars)] = alternativeChar
-
-					alternativeCharState := nearbyWordState{
-						alternativeNextNode,
-						//append(currState.chars, alternativeChar),
-						nextStateChars,
-						currState.changes + 1, currState.index + 1,
-					}
-
-					queue = append(queue, alternativeCharState)
+				alternativeNextNode, ok := currState.node.findChild(alternativeChar)
+				if !ok {
+					continue
 				}
+
+				nextStateChars := make([]rune, len(currState.chars)+1)
+				copy(nextStateChars, currState.chars)
+				nextStateChars[len(currState.chars)] = alternativeChar
+
+				alternativeCharState := nearbyWordState{
+					alternativeNextNode,
+					//append(currState.chars, alternativeChar),
+					nextStateChars,
+					currState.changes + 1, currState.index + 1,
+				}
+
+				queue = append(queue, alternativeCharState)
 			}
 
 			var checkCharRedundancy bool = true
