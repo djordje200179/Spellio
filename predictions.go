@@ -49,7 +49,7 @@ func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, li
 	}
 
 	words := make([]Word, limit)
-	for i := 0; i < limit; i++ {
+	for i := range limit {
 		words[i] = nearbyWords[i].Word
 	}
 
