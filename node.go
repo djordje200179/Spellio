@@ -1,38 +1,36 @@
 package spellio
 
 import (
-	"github.com/djordje200179/extendedlibrary/datastructures/sequences/collectionsequence"
 	"strings"
 )
 
-type letterNode struct {
+type letter struct {
 	*Word
 	char rune
 
-	children []*letterNode
-	parent   *letterNode
+	children []*letter
+	parent   *letter
 }
 
-func (node *letterNode) getChild(char rune) *letterNode {
-	for _, childNode := range node.children {
-		if childNode.char == char {
-			return childNode
+func (l *letter) getChild(char rune) *letter {
+	for _, child := range l.children {
+		if child.char == char {
+			return child
 		}
 	}
 
 	return nil
 }
 
-func (node *letterNode) getWord(endNode *letterNode) string {
-	path := collectionsequence.NewDeque[*letterNode]()
-	for currNode := node; currNode != nil && currNode != endNode; currNode = currNode.parent {
-		path.PushBack(currNode)
+func (l *letter) getWord(end *letter) string {
+	var path []*letter
+	for curr := l; curr != nil && curr != end; curr = curr.parent {
+		path = append(path, curr)
 	}
 
 	var sb strings.Builder
-	for !path.Empty() {
-		currNode := path.PopBack()
-		sb.WriteRune(currNode.char)
+	for i := len(path) - 1; i >= 0; i-- {
+		sb.WriteRune(path[i].char)
 	}
 
 	return sb.String()

@@ -4,15 +4,10 @@ package spellio
 type Word struct {
 	Freq uint // Frequency of the word in the dictionary.
 
-	lastLetter *letterNode
-}
-
-// Empty returns true if the word is empty.
-func (word Word) Empty() bool {
-	return word.lastLetter == nil
+	lastLetter *letter
 }
 
 // String returns the word as a string.
-func (word Word) String() string {
-	return word.lastLetter.getWord(nil)
+func (w Word) String() string {
+	return w.lastLetter.getWord(nil)
 }

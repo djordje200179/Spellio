@@ -20,7 +20,7 @@ import (
 //
 // Zero value is a valid empty Engine.
 type Engine struct {
-	root letterNode
+	root letter
 }
 
 // Insert adds a word to the Engine.
@@ -30,26 +30,24 @@ type Engine struct {
 func (e *Engine) Insert(word string) {
 	word = strings.ToLower(word)
 
-	currNode := &e.root
+	curr := &e.root
 	for _, char := range word {
-		nextNode := currNode.getChild(char)
-
-		if nextNode != nil {
-			currNode = nextNode
-		} else {
-			newNode := &letterNode{char: char, parent: currNode}
-			currNode.children = append(currNode.children, newNode)
-			currNode = newNode
+		next := curr.getChild(char)
+		if next == nil {
+			next = &letter{char: char, parent: curr}
+			curr.children = append(curr.children, next)
 		}
+
+		curr = next
 	}
 
-	if currNode.Word == nil {
-		currNode.Word = &Word{
+	if curr.Word == nil {
+		curr.Word = &Word{
 			Freq:       1,
-			lastLetter: currNode,
+			lastLetter: curr,
 		}
 	} else {
-		currNode.Freq++
+		curr.Freq++
 	}
 }
 
@@ -67,17 +65,17 @@ func cleanWord(word string) string {
 // of non-alphabetic characters and converted to lowercase
 // before being inserted.
 func (e *Engine) InsertFromText(reader io.Reader) {
-	scanner := bufio.NewScanner(reader)
-	scanner.Split(bufio.ScanWords)
+	sc := bufio.NewScanner(reader)
+	sc.Split(bufio.ScanWords)
 
-	for scanner.Scan() {
-		word := scanner.Text()
+	for sc.Scan() {
+		word := sc.Text()
 		word = cleanWord(word)
 
 		e.Insert(word)
 	}
 
-	if err := scanner.Err(); err != nil {
+	if err := sc.Err(); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -90,7 +88,6 @@ func (e *Engine) FindWord(word string) (Word, bool) {
 	word = strings.ToLower(word)
 
 	node := e.findNode(word)
-
 	if node == nil {
 		return Word{}, false
 	}

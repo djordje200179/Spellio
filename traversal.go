@@ -1,7 +1,6 @@
 package spellio
 
 import (
-	"github.com/djordje200179/extendedlibrary/datastructures/sequences/collectionsequence"
 	"strings"
 )
 
@@ -9,57 +8,60 @@ import (
 func (e *Engine) CountWords() int {
 	count := 0
 
-	nodeStack := collectionsequence.NewDeque[*letterNode]()
-	nodeStack.PushBack(&e.root)
-	for !nodeStack.Empty() {
-		currNode := nodeStack.PopBack()
+	stack := []*letter{&e.root}
+	for len(stack) > 0 {
+		curr := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
 
-		if currNode.Word != nil {
+		if curr.Word != nil {
 			count++
 		}
 
-		for _, childNode := range currNode.children {
-			nodeStack.PushBack(childNode)
+		for _, child := range curr.children {
+			stack = append(stack, child)
 		}
 	}
 
 	return count
 }
 
-func (e *Engine) findNode(word string) *letterNode {
-	currNode := &e.root
+func (e *Engine) findNode(word string) *letter {
+	curr := &e.root
 	for _, char := range word {
-		nextNode := currNode.getChild(char)
+		next := curr.getChild(char)
 
-		if nextNode != nil {
-			currNode = nextNode
+		if next != nil {
+			curr = next
 		} else {
 			return nil
 		}
 	}
 
-	return currNode
+	return curr
 }
 
 // GetWordsByPrefix returns all words in the dictionary
 // that start with the given prefix.
 func (e *Engine) GetWordsByPrefix(prefix string) []Word {
 	prefix = strings.ToLower(prefix)
-	startNode := e.findNode(prefix)
+	start := e.findNode(prefix)
+	if start == nil {
+		return nil
+	}
 
-	words := make([]Word, 0)
+	var words []Word
 
-	nodeStack := collectionsequence.NewDeque[*letterNode]()
-	nodeStack.PushBack(startNode)
-	for !nodeStack.Empty() {
-		currNode := nodeStack.PopBack()
+	stack := []*letter{start}
+	for len(stack) > 0 {
+		curr := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
 
-		if currNode.Word != nil {
-			words = append(words, *currNode.Word)
+		if curr.Word != nil {
+			words = append(words, *curr.Word)
 		}
 
-		for _, childNode := range currNode.children {
-			nodeStack.PushBack(childNode)
+		for _, child := range curr.children {
+			stack = append(stack, child)
 		}
 	}
 
@@ -67,7 +69,7 @@ func (e *Engine) GetWordsByPrefix(prefix string) []Word {
 }
 
 type nearbyWordState struct {
-	node    *letterNode
+	node    *letter
 	chars   []rune
 	changes int
 	index   int
@@ -94,10 +96,10 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 
 	possibleWords := make([]NearbyWordInfo, 0)
 
-	statesQueue := collectionsequence.NewDeque[nearbyWordState]()
-	statesQueue.PushBack(nearbyWordState{&e.root, []rune{}, 0, 0})
-	for !statesQueue.Empty() {
-		currState := statesQueue.PopFront()
+	queue := []nearbyWordState{{&e.root, []rune{}, 0, 0}}
+	for len(queue) > 0 {
+		currState := queue[0]
+		queue = queue[1:]
 
 		if currState.index == len(rawWordChars) {
 			if currState.node.Word != nil {
@@ -123,7 +125,7 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 				currState.changes, currState.index + 1,
 			}
 
-			statesQueue.PushBack(regularCharState)
+			queue = append(queue, regularCharState)
 		}
 
 		if currState.changes < maxChanges {
@@ -144,7 +146,7 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 						currState.changes + 1, currState.index + 1,
 					}
 
-					statesQueue.PushBack(alternativeCharState)
+					queue = append(queue, alternativeCharState)
 				}
 			}
 
@@ -162,7 +164,7 @@ func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardL
 					currState.changes + 1, currState.index + 1,
 				}
 
-				statesQueue.PushBack(redundantCharState)
+				queue = append(queue, redundantCharState)
 			}
 		}
 	}

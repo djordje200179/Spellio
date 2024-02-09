@@ -1,18 +1,21 @@
-package keyboardlayouts
+package layouts
 
 import "github.com/djordje200179/spellio"
 
-// EnglishKeyboardLayout is a keyboard layout for the
-// English language QUERTY keyboard.
-var EnglishKeyboardLayout = spellio.KeyboardLayoutNearbyKeys{
-	'a': {'q', 'w', 's', 'z'},
+// Serbian is a keyboard layout for
+// the Serbian language QWERTZ keyboard.
+var Serbian = spellio.KeyboardLayoutNearbyKeys{
+	'a': {'q', 'w', 's', 'y'},
 	'b': {'v', 'g', 'h', 'n'},
 	'c': {'x', 'd', 'f', 'v'},
+	'č': {'l', 'p', 'š', 'ć'},
+	'ć': {'č', 'š', 'đ', 'z'},
 	'd': {'s', 'e', 'r', 'f', 'c', 'x'},
+	'đ': {'š', 'ć', 'ž'},
 	'e': {'w', 's', 'd', 'r'},
 	'f': {'d', 'r', 't', 'g', 'v', 'c'},
-	'g': {'f', 't', 'y', 'h', 'b', 'v'},
-	'h': {'g', 'y', 'u', 'j', 'n', 'b'},
+	'g': {'f', 't', 'z', 'h', 'b', 'v'},
+	'h': {'g', 'z', 'u', 'j', 'n', 'b'},
 	'i': {'u', 'j', 'k', 'o'},
 	'j': {'h', 'u', 'i', 'k', 'm', 'n'},
 	'k': {'j', 'i', 'o', 'l', 'm'},
@@ -23,12 +26,14 @@ var EnglishKeyboardLayout = spellio.KeyboardLayoutNearbyKeys{
 	'p': {'o', 'l', 'č', 'š'},
 	'q': {'a', 'w'},
 	'r': {'e', 'd', 'f', 't'},
-	's': {'w', 'e', 'd', 'x', 'z', 'a'},
-	't': {'r', 'f', 'g', 'y'},
-	'u': {'y', 'h', 'j', 'i'},
+	's': {'w', 'e', 'd', 'x', 'y', 'a'},
+	'š': {'p', 'č', 'ć', 'đ'},
+	't': {'r', 'f', 'g', 'z'},
+	'u': {'z', 'h', 'j', 'i'},
 	'v': {'c', 'f', 'g', 'b'},
 	'w': {'q', 'a', 's', 'e'},
 	'x': {'y', 's', 'd', 'c'},
-	'y': {'t', 'g', 'h', 'u'},
-	'z': {'x', 's', 'a'},
+	'z': {'t', 'g', 'h', 'u'},
+	'ž': {'ć', 'đ'},
+	'y': {'x', 's', 'a'},
 }

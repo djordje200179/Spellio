@@ -1,7 +1,7 @@
 package spellio
 
 import (
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 // CompleteWord returns a list of words that start with the given prefix.
@@ -9,15 +9,15 @@ import (
 // The list is sorted by frequency in descending order and
 // can be limited by the given limit.
 func (e *Engine) CompleteWord(prefix string, limit int) []Word {
-	allWords := e.GetWordsByPrefix(prefix)
-	slices.SortFunc[Word](allWords, func(first, second Word) bool {
-		return first.Freq > second.Freq
+	words := e.GetWordsByPrefix(prefix)
+	slices.SortFunc(words, func(first, second Word) int {
+		return int(first.Freq) - int(second.Freq)
 	})
 
-	if len(allWords) > limit {
-		return allWords[:limit]
+	if len(words) > limit {
+		return words[:limit]
 	} else {
-		return allWords
+		return words
 	}
 }
 
@@ -32,19 +32,16 @@ const allowedChangesQuotient = 3
 // The number of allowed changes is calculated as the length of the word
 // divided by the 3.
 func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, limit int) []Word {
-	allowedChanges := len([]rune(rawWord)) / allowedChangesQuotient
+	maxChanges := len([]rune(rawWord)) / allowedChangesQuotient
 
-	nearbyWords := e.GetNearbyWords(rawWord, allowedChanges, layout)
-	slices.SortFunc[NearbyWordInfo](nearbyWords, func(first, second NearbyWordInfo) bool {
-		if first.Changes < second.Changes {
-			return true
+	nearbyWords := e.GetNearbyWords(rawWord, maxChanges, layout)
+	slices.SortFunc(nearbyWords, func(first, second NearbyWordInfo) int {
+		changesDiff := first.Changes - second.Changes
+		if changesDiff != 0 {
+			return changesDiff
 		}
 
-		if first.Changes == second.Changes {
-			return first.Freq > second.Freq
-		}
-
-		return false
+		return int(first.Freq) - int(second.Freq)
 	})
 
 	if limit > len(nearbyWords) {
