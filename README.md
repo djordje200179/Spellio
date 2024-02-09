@@ -36,6 +36,6 @@ by their frequency in the engine.
 
 Example:
 ```go
-fmt.Printf("housr?: %v\n", engine.CorrectWord("housr", spellio.EnglishKeyboardLayout, 5))
+fmt.Printf("housr?: %v\n", engine.CorrectWord("housr", layouts.English, 5))
 // `housr?: [house hoist]`
 ```

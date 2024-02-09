@@ -4,7 +4,7 @@ import "github.com/djordje200179/spellio"
 
 // Serbian is a keyboard layout for
 // the Serbian language QWERTZ keyboard.
-var Serbian = spellio.KeyboardLayoutNearbyKeys{
+var Serbian = spellio.KeyboardLayout{
 	'a': {'q', 'w', 's', 'y'},
 	'b': {'v', 'g', 'h', 'n'},
 	'c': {'x', 'd', 'f', 'v'},

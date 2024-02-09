@@ -4,7 +4,7 @@ import "github.com/djordje200179/spellio"
 
 // English is a keyboard layout for the
 // English language QWERTY keyboard.
-var English = spellio.KeyboardLayoutNearbyKeys{
+var English = spellio.KeyboardLayout{
 	'a': {'q', 'w', 's', 'z'},
 	'b': {'v', 'g', 'h', 'n'},
 	'c': {'x', 'd', 'f', 'v'},

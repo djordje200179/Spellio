@@ -74,15 +74,15 @@ type NearbyWord struct {
 	Changes int
 }
 
-// A KeyboardLayoutNearbyKeys is a map of characters
-// to the characters that are nearby on the keyboard
+// A KeyboardLayout is a map of characters to
+// characters that are nearby on the keyboard
 // and are considered as possible replacements.
-type KeyboardLayoutNearbyKeys map[rune][]rune
+type KeyboardLayout map[rune][]rune
 
 // GetNearbyWords returns all words in the dictionary
 // that are near the given word and can be transformed
 // into it with the given number of changes.
-func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardLayoutNearbyKeys) []NearbyWord {
+func (e *Engine) GetNearbyWords(rawWord string, maxChanges int, layout KeyboardLayout) []NearbyWord {
 	rawWord = strings.ToLower(rawWord)
 	rawWordChars := []rune(rawWord)
 

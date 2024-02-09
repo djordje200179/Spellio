@@ -25,13 +25,13 @@ const allowedChangesQuotient = 3
 
 // CorrectWord returns a list of words that are similar to the given word.
 //
-// The list is sorted by the number of changes in ascending order and
-// their frequency in descending order.
+// The list is sorted by the number of changes in ascending order
+// and their frequency in descending order.
 // The list can be limited by the given limit parameter.
 //
-// The number of allowed changes is calculated as the length of the word
-// divided by the 3.
-func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayoutNearbyKeys, limit int) []*Word {
+// The number of allowed changes is calculated as the length
+// of the word divided by the 3.
+func (e *Engine) CorrectWord(rawWord string, layout KeyboardLayout, limit int) []*Word {
 	maxChanges := len([]rune(rawWord)) / allowedChangesQuotient
 
 	nearbyWords := e.GetNearbyWords(rawWord, maxChanges, layout)
